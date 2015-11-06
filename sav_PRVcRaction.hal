@@ -1,0 +1,71 @@
+external inner function Boolean CheckObjType(string,string);// objcode, otcode
+
+global
+function LongInt PRVcRecordCheck(var record PRVc PRr,record PRVc PR2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  string 255 tstr,temp;
+  boolean trhs,flagObj,flagBrand,flagReg;
+
+  
+  res = 0;
+  
+	if (nonblank(PRr.Objects)) then begin
+		tstr = PRr.Objects;
+		trhs = true;
+		flagObj=false;flagBrand=false;flagReg=false;
+		while (trhs) begin
+			temp = firstinrange(tstr,20);
+			if (flagobj==false) then begin 
+				flagObj = CheckObjType(temp,"PROJ"); 
+				if flagObj then begin 
+					if temp<>PRr.Code then begin
+						res = -1;
+						RecordCheckError(31001,"",-1,"Objects");  
+						goto	LPRVcRecordCheck;
+					end;
+				end;		
+			end;
+			if (flagBrand==false) then begin flagBrand = CheckObjType(temp,"BRAND");end;
+			if (flagReg==false) then begin flagReg = CheckObjType(temp,"REGIO");end;
+			tstr = right(tstr,len(tstr)-len(temp)-1);
+			if (len(tstr)==0) then begin trhs = false; end;
+
+		end;
+		if (flagObj==false) then begin
+			res = -1;
+			RecordCheckError(31000,"",-1,"Objects");  
+			goto	LPRVcRecordCheck;
+		end;
+		if (flagBrand==false) then begin
+			res = -1;
+			RecordCheckError(31002,"",-1,"Objects");  
+			goto	LPRVcRecordCheck;
+		end;
+		if (flagReg==false) then begin
+			res = -1;
+			RecordCheckError(31003,"",-1,"Objects");  
+			goto	LPRVcRecordCheck;
+		end;
+	end else begin
+		res = -1;
+		RecordCheckError(31000,"",-1,"Objects");  
+		goto	LPRVcRecordCheck;
+	end;
+	
+	if (blank(PRr.PrSalesMan)) then begin
+		res = -1;
+		RecordCheckError(31004,"",-1,"PrSalesMan");  
+		goto	LPRVcRecordCheck;
+	end;
+	if (blankdate(Prr.EndDate)) then begin
+		res = -1;
+		RecordCheckError(31005,"",-1,"EndDate");  
+		goto	LPRVcRecordCheck;
+	end;
+  
+  res=inner.PRVcRecordCheck(PRr,PR2r,stat,long4);
+  LPRVcRecordCheck:;
+  PRVcRecordCheck = res;
+  return;
+end;

@@ -1,0 +1,57 @@
+global
+procedure SearchPRCommitmentRn(record RcVc RepSpec)
+begin
+  record PRVc PRr;
+  record LetVc Letr;
+  
+  SetLangMode(LangUkrainian,"UKR",0);
+  
+  StartReportNoHeaderJob(USetStr(15240));
+  SetRepCol(2,50);
+  SetRepCol(3,300);  
+  SetRepCol(4,400);
+  StartFormat(15);
+  OutString(0,0,USetStr(15241),false);
+  OutString(2,0,USetStr(15242),false);
+  OutString(3,0,USetStr(5622),false)
+  OutString(4,0,USetStr(31008),false);
+  EndFormat;
+  Gray_Divider(0,1);
+  if blank(RepSpec.f1) then begin
+  StartFormat(15);
+  OutString(2,0,"‚изначте принайнґ один символ",false);
+  EndFormat;
+  end else begin
+    while (LoopMain(PRr,1,true)) begin
+      RecordNew(Letr);
+      AddToText(PRr.Text0,Letr);
+      if (StringInText(RepSpec.f1,Letr)) then begin
+      StartFormat(15);
+        OutStringID(0,"DblPRVc",PRr.Code,false,PRr.Code);
+        OutString(2,0,PRr.Name,false);
+        OutString(3,0,PRr.CustCode,false);
+        OutString(4,0,PRr.Text0,false);
+      EndFormat;
+      end;
+    end;
+  end;
+  EndJob;
+  return;
+end;
+
+global
+procedure SearchPRCommitmentLsm()
+begin
+  Integer wn,nwn;
+  record RcVc RepSpec;
+  
+  wn = CurWindow;
+  nwn = OpenWindow("SearchPRCommitmentRClass",0,0,"","",RepSpec);
+  DeselectWindow(nwn,false);
+  ReportDefaults(RepSpec,"SearchPRCommitmentRClass");
+  RepSpec.repname = "SearchPRCommitmentRn";
+  RepSpec.Media = mtScreen;
+  PutWindowRecord(nwn,RepSpec);  
+  WindowFieldGoto(nwn,RepSpec,-1,"f1",true);
+return;
+end;

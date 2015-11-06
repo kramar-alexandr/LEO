@@ -1,0 +1,198 @@
+external procedure FindBrandObjects(string ,var string);
+external inner function LongInt DateDiff(Date,Date);
+
+global
+procedure TimeSheetReportRn(record RcVc RepSpec)
+begin
+  record TSVc TSr;
+  record PRVc PRr;
+  record CUVc CUr;
+  record UserVc USr;
+  record LetVc Letr;
+  row TSVc TSrw;
+  Boolean TrHs,testf,printf;
+  integer rwcnt,i;
+  string 20 frcl,tocl;
+  string 20 tstr;
+  
+  
+  SetLangMode(LangUkrainian,"UKR",0);
+  
+  StartReportNoHeaderJob("Табелі часу");
+  if RepSpec.Media==mtScreen then begin
+    if DateDiff(RepSpec.sEndDate,RepSpec.sStartDate)>350 and blank(RepSpec.f1) and blank(RepSpec.f2) and (RepSpec.flags[1]==0 or RepSpec.flags[1]==1) then begin
+      StartFormat(15);
+      OutString(20,0,"Звіт матиме забагато рядків! Краще запустити його з виводом в Excel або Файл",false);
+      EndFormat;
+      goto LTimeSheetReportRn;
+    end; 
+    SetRepCol(1,0);
+    SetRepCol(2,40);  
+    SetRepCol(3,100);
+    SetRepCol(4,135);
+    SetRepCol(5,200);
+    SetRepCol(6,235);
+    SetRepCol(7,280);
+    SetRepCol(8,350);
+    SetRepCol(9,420);
+    StartFormat(15);
+    OutString(1,0,"NN",false);
+    OutString(2,0,"Date",false);
+    OutString(3,0,"Code",false)
+    OutString(4,0,"Job",false);
+    OutString(5,0,"Hours",false);
+    OutString(6,0,"Brand",false);
+    OutString(7,0,"PM",false);
+    OutString(8,0,"Client",false);
+    OutString(9,0,"Description",false);
+    EndFormat;
+  end else begin
+    SetRepCol(1,0);
+    SetRepCol(2,20);  
+    SetRepCol(3,30);
+    SetRepCol(4,40);
+    SetRepCol(5,50);
+    SetRepCol(6,70);
+    SetRepCol(7,80);
+    SetRepCol(8,90);
+    SetRepCol(9,60);
+    StartFormat(15);
+    OutString(0,0,"NN",false);
+    OutString(20,0,"Date",false);
+    OutString(30,0,"Code",false)
+    OutString(40,0,"Job",false);
+    OutString(50,0,"Hours",false);
+    OutString(60,0,"Description",false);
+    OutString(70,0,"Brand",false);
+    OutString(80,0,"PM",false);
+    OutString(90,0,"Client",false);
+    OutString(100,0,"Name",false);
+    OutString(110,0,"Department",false);
+    OutString(120,0,"Position",false);
+    OutString(130,0,"Rank",false);
+    EndFormat;
+  end;
+  
+  frcl = FirstInRange(RepSpec.f1,20);
+  tocl = LastInRange(RepSpec.f1,20);
+  TSr.RegDate = RepSpec.sStartDate;
+  TrHs = true;
+  while (LoopKey("RegDate",TSr,1,TrHs)) begin
+    testf = true;
+    if TSr.RegDate>RepSpec.sEndDate then begin
+      TrHs = false;
+      testf = false;
+    end;
+    if testf then begin
+      switch (RepSpec.flags[1]) begin
+        case 1: 
+          if TSr.OKFlag!=1 then begin
+            testf = false;
+          end;
+        case 2:
+          if TSr.OKFlag!=0 then begin
+            testf = false;
+          end;
+        otherwise;            
+      end;  
+    end;
+    if testf then begin
+      rwcnt = MatRowCnt(TSr);
+      for (i=0;i<rwcnt;i=i+1) begin
+      printf = true;
+        MatRowGet(TSr,i,TSrw);
+        if TSrw.stp==1 then begin
+          PRr.Code = TSrw.PRCode;
+          if (ReadFirstMain(PRr,1,true)) then begin 
+            if nonblank(RepSpec.f2) then begin
+              if nonblank(PRr.Objects) then begin
+              FindBrandObjects(PRr.Objects,tstr);
+                if tstr!=RepSpec.f2 then begin
+                printf = false;
+                end;
+              end else begin
+                printf = false;
+              end;
+            end else begin
+              if nonblank(PRr.Objects) then begin
+              FindBrandObjects(PRr.Objects,tstr);
+              end;
+            end;
+            CUr.Code = PRr.CustCode;
+            if (ReadFirstMain(CUr,1,true)) then begin 
+              if nonblank(RepSpec.f1) then begin
+                if mid(RepSpec.f1,0,1)=="*" then begin
+                  RecordNew(Letr);
+                  AddToText(CUr.Code,Letr);
+                  if (StringInText(Right(frcl,len(frcl)-1),Letr))==false then begin
+                  printf = false;
+                  end;
+                end else begin
+                  if CUr.Code<frcl or CUr.Code>tocl then begin
+                    printf = false;
+                  end;
+                end;
+              end;
+            end;
+          end;
+          if printf then begin
+            StartFormat(15);
+            OutString(1,0,TSr.SerNr,false);
+            if BlankDate(TSrw.date) then begin
+              OutString(2,0,"",false);
+            end else begin
+              OutDate(2,0,TSrw.date,false);
+            end;
+            OutStringID(3,"DblUserVc",TSrw.EMCode,false,TSrw.EMCode);
+            OutStringID(4,"DblPRVc",TSrw.PRCode,false,TSrw.PRCode);
+            if blank(TSrw.Qty) then begin
+            TSrw.Qty = 0;
+              OutVal(5,0,TSrw.Qty,M4Val,false);
+            end else begin
+              OutVal(5,0,TSrw.Qty,M4Val,false);
+            end;
+            if RepSpec.Media!=mtScreen then begin
+              if TSrw.Spec=="" then begin
+                OutString(9,0,"",false);
+              end else begin
+                OutString(9,0,TSrw.Spec,false);
+              end;
+            end;
+            OutString(6,0,tstr,false);
+            OutString(7,0,PRr.Name,false);
+            OutStringID(8,"DblCUVc",PRr.CustCode,false,PRr.CustCode);
+            if  RepSpec.Media==mtScreen then begin
+              if TSrw.Spec=="" then begin
+                OutString(9,0,"",false);
+              end else begin
+                OutString(9,0,TSrw.Spec,false);
+              end;
+            end;
+            if RepSpec.Media!=mtScreen then begin
+              OutString(100,0,CUr.Name,false);
+              USr.Code = TSrw.EMCode;
+              if (ReadFirstMain(USr,1,true)) then begin 
+                OutString(110,0,USr.Department,false);
+                OutString(120,0,USr.Position,false);
+                switch (USr.Rank) begin
+                  case 0: OutString(130,0,"Junior",false);
+                  case 1: OutString(130,0,"Senior",false);
+                  case 2: OutString(130,0,"Not aplicable",false);
+                  otherwise;            
+                end;  
+              end else begin
+                OutString(110,0,"",false);
+                OutString(120,0,"",false);
+                OutString(130,0,"",false);
+              end;
+            end;
+            EndFormat;
+          end;
+        end;  // if stp
+      end;   // for rwcnt
+    end;  // testf
+  end;  // while
+  LTimeSheetReportRn:;
+  EndJob;
+  return;
+end;

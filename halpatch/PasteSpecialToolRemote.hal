@@ -1,0 +1,26 @@
+
+global
+procedure ObjBTSClassArrayOnOpenRemote(string objtype,var Array string astr,var Integer acnt)
+begin
+  record ObjVc OBjr;
+  boolean TrHs,testf;
+ 
+  OBjr.OTCode=objtype; 
+  TrHs=true;
+  While (LoopKey("OTCode",OBjr,1,TrHs)) begin
+    testf = true;
+    if (OBjr.OTCode<>objtype) then begin
+      testf = false;
+      TrHs = false;
+    end;
+    if (OBjr.TerminateFlag!=0) then begin
+      testf = false;
+    end;
+    if (testf) then begin
+      astr[acnt] = OBjr.Code & "     ";
+      astr[acnt] = astr[acnt] & left(OBjr.Comment,30);
+      acnt = acnt + 1;
+    end;
+  end;
+  return;
+end;

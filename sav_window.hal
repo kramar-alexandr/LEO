@@ -1,0 +1,331 @@
+procedure dummy() //##ii
+begin //##ii
+  SetLangMode(LangUkrainian,"UKR",0); //##ii
+  return; //##ii
+end; //##ii
+
+window SearchPRCommitmentRClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+real h,v,vs;
+WindowBegin("Визначте commitment",SearchPRCommitmentRClass,CGRcW,RcType);
+  SetWRect(20,80,400,200);
+  v= 10; vs = 20; h = 100;
+  EditFieldTL(h,v,150,"Commitment",M4Str,Normal,60,f1,false,0);
+  EndWindow;
+end;
+
+window PositionDClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+real h,v,vs;
+WindowBegin("Position",PositionDClass,CGview,PositionView);
+  SetWRect(64,80,509,200);
+  UseView(PositionVc);
+  EditField(h=80,v=10,50,"Код",St_i,Code,false,0);
+  EditField(h,v+=20,300,"Опис",Normal,Description,false,0);
+  EndWindow;
+end;
+  
+window PositionLClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Positions",PositionLClass,CGmlist,PositionView);
+  SetWRect(64,80,509,298);
+  Sizeable(-1,-1,0,0);
+  UseView(PositionVc);
+  SpawnClass(PositionDClass);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,  "Код",Code,false,Code);
+  RlColKey(81,81,"Найменування",Description,false,Description);
+  SearchField("Пошук");
+  EndWindow;
+end;
+  
+window PositionSClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Визначте Position",PositionSClass,CGslist,PositionView);
+  SetWRect(240,80,600,298);
+  Sizeable(-1,-1,0,0);
+  UseView(PositionVc);
+  SpawnClass(PositionDClass);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,  "Код",Code,false,Code);
+  RlColKey(51,51,"Опис",Description,false,Description);
+  SearchField("Пошук");
+  EndWindow;
+end;
+
+window ContractsDClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+real h,v,vs,h2;
+//2011_08_30 SAV LEO-1 регистр  контракты
+  WindowBegin("Контракти",ContractsDClass,CGview,-);
+  SetWRect(64,80,640,450);
+ // Sizeable(-1,-1,0,0);
+  UseView(ContractsVc);
+  FormName(ContractsForm);
+  vs = 20; h = 100; h2 = 350;v = 10;
+  //Tile(0,120,false,"",Code);
+  EditField(h,v+=vs,100,"Номер",Normal,Code,false,0);
+  EditField(h2,v,100,"Дата",Normal,TransDate,false,PasteCurDate);
+  EditField(h,v+=vs,100,"Клієнт",Normal,CustCode,false,CUSClass);
+  EditField(h2,v,100,"Назва",Normal,CustName,false,0);
+  EditField(h,v+=vs,100,"Форма розрахунків",Normal,PayDeal,false,0);
+  EditField(h2,v,100,"Вид",Normal,Type,false,0);
+  EditField(h,v+=vs,100,"Термін дії",Normal,ActDate,false,PasteCurDate);
+  CheckBox(h,v+40,0,"OK",OKFlag);
+  CheckBox(h2,v+40,0,"Закрито",Closed);
+  SpecialMenu("",' ',1,""); // SAV
+  EndWindow;  
+end;
+  
+window ContractsLClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+//2011_08_30 SAV LEO-1 регистр  контракты
+  WindowBegin("Контракти",ContractsLClass,CGmlist,-);
+  SpawnClass(ContractsDClass);
+  SetWRect(64,80,550,298);
+  Sizeable(-1,-1,0,0);
+  UseView(ContractsVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(8,8,"Номер",Code,false,Code);
+  RlColKey(104,104,"Дата",TransDate,false,TransDate);
+  RlColKey(204,204,"Клієнт",CustCode,false,CustCode);
+  RlColKey(280,280,"Назва",CustName,false,CustName);
+  RlColKey(400,400,"OK",OKFlag,false,OKFlag);
+  RlColKey(440,440,"Закрито",Closed,false,Closed);
+  SearchField("Найти");
+  EndWindow;
+end;
+
+window ContractsSClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin  
+  //2011_08_30 SAV LEO-1 регистр  контракты
+  WindowBegin("Контракти",ContractsSClass,CGother,RcType);
+  SetWRect(240,80,470,298);
+  StringList(9,9,200,209);
+  EndWindow;
+end;
+
+window VATVIRegRClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin 
+real h,v,vs,h2;
+WindowBegin("Визначте реєстр отриманих податкових накладних",VATVIRegRClass,CGRcW,RcType);
+	SetWRect(20,80,470,170);
+	v= 10; vs = 20; h = 150;
+	PeriodField(h,v,"Період");
+	EndWindow;
+end;
+
+
+window VATIVRegRClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin 
+real h,v,vs,h2,vm;
+WindowBegin("Визначте реєстр податкових накладних виданих",VATIVRegRClass,CGRcW,RcType);
+	SetWRect(20,80,470,170);
+	v= 10; vs = 20; h = 150;
+	PeriodField(h,v,"Період");
+	ButtonFrame(h,vm=(v+=41),123,2,"Функція");
+	RadioButton(h,v,0,0,"По даті",ArtMode);
+	RadioButton(h,v+=16,1,0,"По номеру ПН",ArtMode);
+	EndWindow;
+end;
+    
+window VIJSpecRClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin 
+real h,v,vs,h2,vm;	 
+	  WindowBegin("Визначте журнал актів/накл./ПН постачальників",VIJSpecRClass,CGRcW,RcType);
+  SetWRect(20,80,470,400);
+  v= 10; vs = 20; h = 150;
+  Tile(0,20,false,"",f1);
+  EditFieldTL(h,v, 150,"Номер",   M4Str,Normal,30,f1,false,0);
+  TileButtons(v,2);
+  Tile(1,280,false,"1",f2);
+  v = 6;
+  PeriodField(h,v,"Період");
+  EditFieldTL(h,v+=vs ,75,"Постачальник",M4UStr,Normal,20,f2,false,VESClass);
+  EditFieldTL(h,v+=20 ,150,"Класифікації",M4UStr,Normal,60,f4,false,CClassSClass);
+  EditFieldTL(h,v+=20 ,70,"Типи класифікацій",M4UStr,Normal,30,f5,false,CTypeSClass);
+  EditFieldTL(h,v+=vs ,75,"Підпис",M4UStr,Normal,10,f3,false,UserSClass);
+  EditFieldTL(h,v+=vs,250,"Об'єкт",M4UStr,Normal,60,ObjStr,false,ObjSClass);
+  EditFieldTL(h,v+=vs,50,"Тип об'єкту",M4UStr,Normal,5,ObjType,false,OTSClass);
+  EditFieldTL(h,v+=vs,250,"Об'єкт з рядка",M4UStr,Normal,60,f6,false,ObjSClass);
+  EditFieldTL(h,v+=vs,50,"Проект",M4UStr,Normal,20,TransStr,false,PRSClass);
+  EditFieldTL(h,v+=vs ,100,"Продавець",M4UStr,Normal,10,AccStr,false,UserSClass);
+  EditFieldTL(h,v+=vs ,50,"Група продажу",M4UStr,Normal,10,Stext,false,SalesGroupSClass);
+  EditFieldTL(h,v+=vs ,50,"Мін. сума",M4Val,Normal,0,vals0,false,0);
+  Tile(2,340,false,"2",d1);
+  v = 6;
+  EditFieldTL(h,v ,100,"Дата отримання",M4Date,Normal,0,d1,false,PasteCurDate);
+  CheckBox(h,v+=vs,0,"Лише попередні акти/накл.",flags[10]);
+  CheckBox(h,v+=16,0,"Лише відкладені акти/накл.",flags[11]);
+  h = 12; vm=v+50; v=vm;
+  ButtonFrame(h,v,123,3,"Функція");
+  RadioButton(h,v,0,0,"зведений",ArtMode);
+  RadioButton(h,v+=16,1,0,"докладний",ArtMode);
+  RadioButton(h,v+=16,2,0,"зведений з ПДВ",ArtMode);
+  h= h+148; v = vm;
+  ButtonFrame(h,v,123,2,"Статус");
+  CheckBox(h,v,0,"незатверджені",flags[1]);
+  CheckBox(h,v+=16,1,"затверджені",flags[2]);
+  h=h+148; v =  vm;
+  ButtonFrame(h,v,123,3,"Вид акту/накл.");
+  CheckBox(h,v,0,"звичайні",flags[3]);
+  CheckBox(h,v+=16,0,"готівкові платежі",flags[4]);
+  CheckBox(h,v+=16,0,"кредитові",flags[5]);
+  ButtonFrame(h,v+=40,123,3,"Функція");
+  RadioButton(h,v,0,0,"всі",flags[6]);
+  RadioButton(h,v+=16,1,0,"отримані ПН",flags[6]);
+  RadioButton(h,v+=16,2,0,"не отримані ПН",flags[6]);
+  EndWindow;
+end;
+
+window TimeSheetReportRClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin 
+real h,v,vs; 
+WindowBegin("Звіт по таблицям часу",TimeSheetReportRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  v= 10; vs = 20; h = 100;
+  StaticText(50,v,"Звіт може мати забагато рядків інформації!",false);
+  StaticText(50,v+=vs,"Тому запуск за великий проміжок часу без",false);
+  StaticText(50,v+=vs,"використання фільтрів радиться робити в Excel або в файл",false);
+  PeriodField(h,v+=vs,"Період");
+  EditFieldTL(h,v+=vs,150,"Кліент",M4Str,Normal,60,f1,false,CUSClass);
+  EditFieldTL(h,v+=vs,150,"Brand",M4Str,Normal,20,f2,false,Obj3SClass);
+  ButtonFrame(h=12,v+=vs+20,130,3,"Шукати");
+  RadioButton(h,v,0,0,"Всі",flags[1]);
+  RadioButton(h,v+=16,1,0,"Лише затверджені",flags[1]);
+  RadioButton(h,v+=16,2,0,"Лише незатверджені",flags[1]);
+  EndWindow;
+end;
+
+window Obj2SClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin   
+  WindowBegin("Визначте об'єкт",Obj2SClass,CGslist,ObjView);
+  SpawnClass(ObjDClass);
+  SetWRect(220,80,600,298);
+  Sizeable(-1,-1,0,0);
+  UseView(ObjVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,"Об'єкт",Code,false,OTCodeSubset1);
+  RlColKey(151,151,"Тип",OTCode,false,OTCodeSubset);
+  RlColKey(201,201,"Найменування",Comment,false,ActComment);
+  SearchField("Пошук");
+  EndWindow;
+end;
+
+window Obj3SClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin   
+  WindowBegin("Визначте об'єкт",Obj3SClass,CGslist,ObjView);
+  SpawnClass(ObjDClass);
+  SetWRect(220,80,600,298);
+  Sizeable(-1,-1,0,0);
+  UseView(ObjVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,"Об'єкт",Code,false,Code);
+  RlColKey(151,151,"Тип",OTCode,false,ActOTCode);
+  RlColKey(201,201,"Найменування",Comment,false,ActComment);
+  SearchField("Пошук");
+  EndWindow;
+end;
+window DelRegLEOVClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+  begin
+  real h,v,vs; 
+WindowBegin("kill reg",DelRegLEOVClass,CGMnt,RcType);
+  SetWRect(20,80,400,200);
+   vs = 20; h=120;
+  EditFieldTL(h,v=6,270,"Reg",M4Str,Normal,20,f1,false,0);
+  EndWindow;
+  end;
+  
+  
+  window AT2UnitDClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,v,vs;
+  WindowBegin("Необоротний актив",AT2UnitDClass,CGview,-);
+  SetWRect(20,80,600,415);
+//  Sizeable(0,-1,0,0);
+  FormName(AT2InForm);
+  UseView(AT2UnitVc);
+  Tile(0,90,false,"",InventoryNr);
+  vs = 20; h=120; h1=260; h2=420;
+  EditField(h,v=6, 120, "Інвентарний №",Normal,InventoryNr,false,0);
+  EditField(h,v+=vs,-40,"Опис",Normal,Description,false,0);
+  EditField(h,v+=vs,120, "Категорія",Normal,AT2Code,false,AT2SClass);
+  EditField(h2,v,60, "Клас",Normal,AT2Class,false,AC2SClass);
+  TileButton(1,"Придбання");
+  TileButton(2,"Власник");
+  TileButton(3,"Моделі");
+  TileButton(4,"Значення");
+  TileButton(5,"Вартості");
+  CheckBox(h2,6,0,"Закрито",Activef);
+  Tile(1,170,false,"1",VECode);
+  EditField(h,v=6,120, "Постачальник",Normal,VECode,false,VESClass);
+  EnterSkip(VISerNr);
+  EditField(h2,v,-40, "Найменування",Normal,VEName,false,0);
+  EditField(h,v+=vs,120,"№ акту/накл.",Normal,VISerNr,false,0);
+  EditField(h2,v,-40, "№ акту/накл. постач-ка",Normal,VEInvoiceNr,false,0);
+  EditField(h,v+=vs,120,"Дата придбання",Normal,PurchaseDate,false,PasteCurDate);
+  EditField(h2,v,-40,"Вартість придбання",Normal,PurchVal,true,0);
+  EditField(h,v+=vs,120,"Дата випуску",Normal,ProdDate,false,PasteCurDate);
+  EditField(h2,v,-40,"ПДВ",Normal,VATVal,true,0);
+  EditField(h,v+=vs,120,"Серійний №",Normal,SerialNr,false,0);
+  EditField(h2,v,-40,"Не виправлено",Normal,VATReclaimed,true,0);
+  EditField(h,v+=vs,120,"№ гарантії",Normal,WarrantyNr,false,0);
+  EditField(h2,v,-40,"Нове/БВ",Normal,NewUsedf,false,SetSClass);
+  EditField(h,v+=vs,120,"№ контракту",Normal,ContractNr,false,0);
+  EditField(h2,v,-40,"Об'єкти",Normal,Objects,false,ObjSClass);
+  EditField(h,v+=vs,-40,"Коментар",Normal,Comment,false,0);
+  Tile(2,70,false,"2",DepCode);
+  EditField(h,v=6,120, "Відділ",Normal,DepCode,false,DepSClass);
+  EnterSkip(RespPerson);
+  EditField(h2,v,120, "Найменування",Normal,DepName,false,0);
+  EditField(h,v+=vs,120, "Співробітник",Normal,RespPerson,false,UserSClass);
+  EditField(h2,v,120, "Частина від",Normal,MotherInvNr,false,AT2UnitSClass);
+  EditField(h,v+=vs,120,"Кількість",Normal,Quantity,true,0);
+  Tile(3,130,false,"3",Model1);
+  EditField(h,v=6,120, "Модель 1",Normal,Model1,false,DprModSClass);
+  EditField(h2,v,120, "Модель 2",Normal,Model2,false,DprModSClass);
+  EditField(h,v+=vs,120,"Амортизовано 1",Normal,InitDeprVal1,true,0);
+  EditField(h2,v,120,"Амортизовано 2",Normal,InitDeprVal2,true,0);
+  EditField(h,v+=vs,120, "Дата початку 1",Normal,StartingDate1,false,PasteCurDate);
+  EditField(h2,v,120, "Дата початку 2",Normal,StartingDate2,false,PasteCurDate);
+  EditField(h,v+=vs,120, "Мін. модель",Normal,ModelMin,false,DprModSClass);
+  EditField(h2,v,120, "Макс. модель",Normal,ModelMax,false,DprModSClass);
+  EditField(h,v+=vs,120,"Використовується з",Normal,UsedFromDate,false,PasteCurDate);
+  EditField(h2,v,120,"Дата закінчення",Normal,EndDate,false,PasteCurDate);
+  EditField(h2,v+=vs,120,"Вартість 2",Normal,PurchVal2,true,0);
+  Tile(4,90,false,"4",ResVal);
+  EditField(h,v=6,120, "Залишкова вартість",Normal,ResVal,true,0);
+  EditField(h2,v,120,"Сума страховки",Normal,InsuranceVal,true,0);
+  EditField(h,v+=vs,120, "Мін. залишок",Normal,MinDprVal,true,0);  
+  EditField(h2,v,120,"Пільгова вартість",Normal,SubsidyVal,true,0);
+  EditField(h,v+=vs,120, "Земля",Normal,LandVal,true,0);
+  EditField(h2,v,120,"Інвестиції",Normal,InvestVal,true,0);
+  EditField(h,v+=vs,120, "Фіскальна вартість",Normal,FiscalVal,true,0);
+  EditField(h2,v,120,"Дата інвестицій",Normal,InvestDate,false,PasteCurDate);
+  Tile(5,50,false,"5",RunCost);
+  EditField(h,v=6,120, "Вар-ть год. роботи",Normal,RunCost,true,0);
+  EditField(h2,v,120,"Вар-ть год. простоювання",Normal,IdleCost,true,0);
+  EditField(h,v+=vs,120,"Об'єкти виробництва",Normal,ProdObjects,false,ObjSClass);
+  SpecialMenu("Створити запис операції по введенню в експлуатацію",' ',0,"CreateAT2UnitTR");
+  if (UserCanReport("AT2HistRn","",true)) then begin 
+  SpecialMenu("Історія активу",'h',0,"AT2HistDsm");
+  SpecialMenu("Експортувати для акту введення в експлуатацію",'r',0,"ExportForActDsm");
+  end;
+  EndWindow;
+end;
+  

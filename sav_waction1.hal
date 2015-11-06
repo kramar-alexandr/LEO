@@ -1,0 +1,275 @@
+
+global 
+function Boolean ContractsDClassCustCodeEFAfter(Integer wn,Boolean changedf)
+begin
+	record ContractsVc CTr;
+	record CUVc CUr;
+	Boolean res;
+	integer i;
+
+  if (changedf) then begin
+		GetWindowRecord(wn,CTr);
+		DeselectWindow(wn,false);
+		CUr.Code = CTr.CustCode;
+		if (readfirstmain(CUr,1,true)) then begin
+			CTr.CustName = CUr.Name;
+			PutWindowRecord(wn,CTr);
+		end; 
+	end;
+  ContractsDClassCustCodeEFAfter = true;
+  return;
+end;
+
+global
+function Boolean ContractsDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+	switch (fieldname) begin
+		case "CustCode": res	= ContractsDClassCustCodeEFAfter(wn,changed!=0); 
+	end;
+  ContractsDClassAfterEditField = res;
+  RETURN;
+END;
+
+global
+function Boolean ContractsDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
+begin
+  Boolean res;
+  record ContractsVc CTr;
+	
+	res = true;
+	GetWindowRecord(wn,CTr);    
+	if (CTr.OKFlag==1) then begin
+	
+		switch (fieldname) begin
+			case "Code":res = false;
+			case "TransDate":res = false;
+			case "CustCode":res = false;
+			case "CustName":res = false;
+			case "PayDeal":res = false;
+			case "Type":res = false;
+		end;
+	end;
+	ContractsDClassActiveEditField = res;
+  return;
+end;
+
+
+
+global
+procedure ContractsSClassArrayOnOpen(var Array string astr,var Integer acnt, string CuCode)
+begin
+  record ContractsVc CTr;
+  Integer i,rwcnt;
+  boolean trhs;
+  
+	trhs = true;
+	CTr.CustCode = CuCode;
+	while (loopkey("ActCustCode",CTr,1,trhs)) begin
+		if CTr.CustCode==CuCode then begin
+			astr[acnt] = CTr.Code & "      " &  CTr.CustCode;
+			acnt = acnt + 1;
+		end else begin
+			trhs = false;
+		end;
+	end;
+  return;
+end;
+
+global
+function Boolean ContractsSClassOnOpenWindow(Integer wn)
+begin
+  Array string 255 astr;
+  Integer i,acnt;
+  record IVVc IVr;
+  
+  GetWindowRecord(MotherWindow(wn),IVr);
+  
+  ContractsSClassArrayOnOpen(astr,acnt,IVr.CustCode);
+  for (i=0;i<acnt;i=i+1) begin
+    SetListString(wn,len(astr[i]),astr[i],false);    
+  end;
+  ContractsSClassOnOpenWindow = false;
+  return;
+end;
+
+global
+function Boolean ContractsSClassOnOKWindow(Integer wn)
+begin
+  Integer mwn,i;
+  string 60 tstr;
+  boolean trhs;
+  
+    mwn = MotherWindow(wn);
+  if (SelectedListLine(wn)>=0) then begin
+      tstr = GetListString(wn,SelectedListLine(wn));
+      tstr = left(tstr,10);
+		trhs = true;
+		while trhs begin
+			if (mid(tstr,i,1)<>" ") then begin 
+				i=i+1;
+			end else begin
+				tstr = left(tstr,i);trhs = false;
+			end;
+			if (i>len(tstr)) then begin trhs = false; end;
+		end;
+  end else begin
+       tstr="";
+  end;  
+
+  CloseWindow(wn);
+  PasteString(mwn,tstr);
+  ContractsSClassOnOKWindow = false;
+  return;
+end;
+
+
+function Boolean IVDClassContractEFAfter(Integer wn,Integer changed)
+begin  
+  record IVVc IVr;
+  record ContractsVc CTr;
+
+  if (changed!=0) then begin  
+	SetLangMode(LangUkrainian,"UKR",0);
+    DeselectWindow(wn,false);
+    GetWindowRecord(wn,IVr);
+		CTr.Code = IVr.Contract;
+		CTr.CustCode = IVr.CustCode;
+		if readfirstmain(CTr,2,true) then begin
+			if nonblankdate(CTr.TransDate) then begin
+				IVr.ContractDate=CTr.TransDate;
+			end else begin
+				IVr.ContractDate = IVr.TransDate;
+			end;
+			if nonblank(CTr.Type) then begin
+				IVr.ContractType=CTr.Type;
+			end else begin
+				IVr.ContractType="Договір купівлі-продажу";
+			end;
+			if nonblank(CTr.PayDeal) then begin
+				IVr.ContractPayDeal=CTr.PayDeal;
+			end else begin 
+				IVr.ContractPayDeal="Оплата з поточного рахунку";
+			end;
+		end else begin
+			IVr.Contract="-";
+			IVr.ContractDate = IVr.TransDate;
+			IVr.ContractType="Договір купівлі-продажу";
+			IVr.ContractPayDeal="Оплата з поточного рахунку";
+		end;
+    PutWindowRecord(wn,IVr);
+  end;  
+  IVDClassContractEFAfter = true;
+  return;
+end;
+
+global
+function Boolean IVDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+	
+	logtext(0,1);
+	res = inner.IVDClassAfterEditField(wn,fieldname,fn,rownr,changed);
+	logtext(0,10);
+	switch (fieldname) begin
+		case "Contract": res = IVDClassContractEFAfter(wn,changed);
+	end;
+	logtext(0,11);
+  IVDClassAfterEditField = res;
+  RETURN;
+END;
+
+global
+function Boolean IVDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+  
+ 
+	res = inner.IVDClassActiveEditField(wn,fieldname,fn,wnst,rownr,changed);
+	if fieldname=="contract" then begin
+		res = true;
+	end;
+  IVDClassActiveEditField = res;
+  RETURN;
+END;
+
+global
+function Boolean VIDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+  
+ 
+	res = inner.VIDClassActiveEditField(wn,fieldname,fn,wnst,rownr,changed);
+	if fieldname=="PNSerNr" then begin res = true; end;
+	if fieldname=="PNDate" then begin res = true; end;
+	if fieldname=="PNTakeDate" then begin res = true; end;
+	if fieldname=="PNWithoutVAT" then begin res = true; end;
+	if fieldname=="PNVAT" then begin res = true; end;
+  VIDClassActiveEditField = res;
+  RETURN;
+END;
+
+global
+function Boolean IVDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+  
+ 
+	res = inner.IVDClassActiveEditField(wn,fieldname,fn,wnst,rownr,changed);
+	if fieldname=="PNSerNr" then begin res = true; end;
+	if fieldname=="Included" then begin res = true; end;
+	if fieldname=="Contract" then begin res = true; end;
+	if fieldname=="ContractDate" then begin res = true; end;
+	if fieldname=="ContractType" then begin res = true; end;
+	if fieldname=="ContractPayDeal" then begin res = true; end;
+	if fieldname=="Reason" then begin res = true; end;
+  IVDClassActiveEditField = res;
+  RETURN;
+END;
+
+global procedure ExportIVDsm()
+begin
+	integer wn;
+	record IVVc IVr;
+	
+	wn = curwindow;
+	getwindowrecord(wn,IVr);
+	openexportfile("IVVc.txt",false);
+	exportrecord(IVr);
+	closefile;
+
+return;
+end;
+
+global procedure ExportVIDsm()
+begin
+	integer wn;
+	record VIVc VIr;
+	
+	wn = curwindow;
+	getwindowrecord(wn,VIr);
+	openexportfile("VIVc.txt",false);
+	exportrecord(VIr);
+	closefile;
+
+return;
+end;
+
+global procedure ExportForActDsm()
+begin
+	integer wn;
+	record AT2UnitVc ATr;
+	
+	wn = curwindow;
+	if(WindowState(wn)==0)then begin
+		getwindowrecord(wn,ATr);
+		setexportcodepage("CP1251");
+		createfile("ATr.txt");
+		exportstring(currentuser);
+		newline;
+		exportrecord(ATr);
+		closefile;
+	end;
+	
+return;
+end;

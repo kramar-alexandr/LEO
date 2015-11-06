@@ -1,0 +1,73 @@
+global
+procedure DblUserVc(string dblstr,string l,Integer currepwn)
+begin
+  Integer wn;
+  record UserVc USr;
+   
+  USr.Code = dblstr;
+  if (ReadFirstMain(USr,1,true)) then begin
+    wn = OpenWindow("USDClass",1,0,"","",USr);
+  end;     
+  return;
+end;
+
+global 
+procedure FindBrandObjects(string objects,var string tstr)
+begin
+	string 20 test;
+	string 1 temp;
+	integer i;
+  record ObjVc Objr;
+  
+	tstr = "";
+  for (i=0;i<len(objects);i=i+1) begin
+		temp = mid(objects,i,1);
+    if temp=="," or i==len(objects) then begin
+      Objr.Code = tstr;
+      if (ReadFirstMain(Objr,1,true)) then begin 
+        if Objr.OTCode!="Brand" then begin
+        tstr = "";
+        end else begin
+        i = len(objects)+1;
+        end;
+      end;
+    end else begin
+      tstr = tstr & temp;
+    end;
+	end;
+  if tstr=="AL" then begin
+    tstr = tstr & "-ARC";
+  end;
+  return;
+end;
+
+global 
+procedure ConvertPhone(var string tstr)
+begin
+	string 255 res;
+	string 1 temp;
+	integer i;
+	for (i=0;i<len(tstr);i=i+1) begin
+		temp = mid(tstr,i,1);
+		if (asc(temp)>=48) and (asc(temp)<=57) then begin
+			res = res & temp;
+		end;
+	end;
+	tstr = res;
+return;
+end;
+
+global
+function Boolean Obj3SClassOnOpenWindow(Integer wn)
+begin
+  
+  Integer mwn,wn2;
+  Record ObjVc Objr;
+  
+  mwn = MotherWindow(wn);
+  CloseWindow(wn);
+  wn2=OpenWindow("Obj2SClass",0,mwn,"BRAND","OTCodeSubset1",Objr);
+
+  Obj3SClassOnOpenWindow = true;
+return;
+end;

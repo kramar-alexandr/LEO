@@ -1,0 +1,21 @@
+global updating
+procedure CommitmentMn(record RcVc RepSpec)
+begin
+	record PRVc PRr,OldPRr;
+	longint i;
+	string 255 tstr,temp;
+	boolean flag;
+
+	while (loopmain(PRr,1,true)) begin
+		if (nonblank(Prr.Text0)) then begin
+			if (len(Prr.Text0)<=22) then begin
+				recordcopy(OldPRr,PRr);
+				PRr.Commitment = Prr.Text0;
+				if (recordupdate(OldPRr,PRr,false)) then begin end;
+				logtext (0,Prr.Code & " " & i);
+				i=i+1;
+			end;
+		end;
+	end;
+return;
+end;

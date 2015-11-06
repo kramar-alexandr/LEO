@@ -1,0 +1,202 @@
+function boolean GetObjectOfType(string In,String Type)
+begin
+	record ObjVc OBjr;
+	string 255 temp,tstr;
+	boolean trhs,res;
+	
+	tstr = In;
+	trhs =true;
+	while trhs begin
+		temp = firstinrange(tstr,10);
+		Objr.Code = temp;
+		if (readfirstmain(Objr,1,true)) then begin end;
+		if Objr.OTCode==Type then begin
+			res=true;
+			trhs = false; 
+		end;
+		tstr = right(tstr,len(tstr)-len(temp)-1);
+		if blank(tstr) then begin trhs = false; end;
+	end;
+	GetObjectOftype = res;
+return;
+end;
+
+
+
+global function LongInt POVcRecordCheck(var record POVc POr,record POVc PO2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  record ObjVc Objr;
+  
+	SetLangMode(LangUkrainian,"UKR",0);
+	if blank(POr.VEContact) then begin
+		RecordCheckError(10895," Визначте конт. особу",-1,"VEContact");
+		res=-1;
+		goto POVcRecordCheckFailed;
+   end;
+	if blank(POr.PRCode) then begin
+		RecordCheckError(10895," Визначте проект",-1,"PRCode");
+		res=-1;
+		goto POVcRecordCheckFailed;
+   end;
+	
+
+	if GetObjectOfType(POr.Objects,"PROJ")==false then begin
+		RecordCheckError(10895," Визначте об'єкт типу Проект",-1,"Objects");
+		res=-1;
+		goto POVcRecordCheckFailed;
+   end;
+	
+   res=inner.POVcRecordCheck(POr,PO2r,stat,long4);
+	POVcRecordCheckFailed:;
+	POVcRecordCheck=res;
+return;
+end;
+
+/*
+global updating  // расширение функционала - есть иннер
+function LongInt POVcRecordDefaults(var record POVc POr,record POVc PO2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+		
+
+  
+   res=inner.POVcRecordDefaults(POr,PO2r,stat,long4);
+	POr.OurContact=currentuser;
+	
+	POVcRecordDefaults=res;
+return;
+end;
+*/
+global updating  // расширение функционала - есть иннер
+function LongInt POVcRecordSave(var record POVc POr,record POVc PO2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+		
+
+	POr.OurContact=currentuser;
+   res=inner.POVcRecordSave(POr,PO2r,stat,long4);
+	
+	
+	POVcRecordSave=res;
+return;
+end;
+
+global //2011_08_30 SAV LEO-1 –егистр  контракты
+function LongInt ContractsVcRecordInIndex(record ContractsVc CTr,string indexname)
+begin
+  LongInt res;
+  
+  res = 1;
+  if (CTr.Closed==1) then begin 
+    if (indexname=="ActCode")  then begin res = 0; end;
+    if (indexname=="ActTransDate")  then begin res = 0; end;
+    if (indexname=="ActCustCode")  then begin res = 0; end;
+    if (indexname=="ActOKFlag")  then begin res = 0; end;
+    if (indexname=="ActSearchKey")  then begin res = 0; end;
+  end;
+  
+  ContractsVcRecordInIndex = res;
+  return;
+end;
+
+
+global  // расширение функционала - есть иннер
+function LongInt IVVcRecordCheck(record IVVc IVr,record IVVc IV2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  record IVVc oldIVr,oldIV2r;
+  boolean trhs;
+  integer lastnum;
+  
+	SetLangMode(LangUkrainian,"UKR",0);
+	
+	oldIV2r.TransDate = "01/" & getmonth(IVr.TransDate) & "/" & GetYear(IVr.TransDate);
+	trhs = true;
+	while (loopkey("TransDate",oldIV2r,1,trhs)) begin
+		if (getmonth(oldIV2r.TransDate)<>getmonth(IVr.TransDate)) then begin trhs = false; end;
+		if (oldIV2r.SerNr<>IVr.SerNr) and trhs then begin
+			if (IVr.PNSerNr==oldIV2r.PNSerNr) and (IVr.PNSerNr<>-1) then begin
+				res = -1;
+				RecordCheckError(31007,"",-1,"PNSerNr");  
+				goto IVVcRecordCheckFailed;
+			end;
+		end;
+	end;	
+	
+   res=inner.IVVcRecordCheck(IVr,IV2r,stat,long4);
+	
+	if (res==0  and IVr.OKFlag==1 and IV2r.OKFlag<>1) then begin
+		if IVr.PNSerNr==-1 then begin
+			oldIVr.TransDate = "01/" & getmonth(IVr.TransDate) & "/" & GetYear(IVr.TransDate);
+			trhs = true;lastnum=0;
+			while (loopkey("TransDate",oldIVr,1,trhs)) begin
+				if (getmonth(oldIVr.TransDate)<>getmonth(IVr.TransDate)) then begin trhs = false; end;
+				if (oldIVr.SerNr<>IVr.SerNr) and trhs then begin
+					if lastnum < oldIVr.PNSerNr then begin lastnum = oldIVr.PNSerNr; end;
+				end;
+			end;
+			IVr.PNSerNr =lastnum+1;
+		end;
+	end;
+	if blank(IVr.Contract) then begin IVr.Contract="-"; end;
+	if blankdate(IVr.ContractDate) then begin IVr.ContractDate = IVr.TransDate;end;
+	if blank(IVr.ContractType) then begin IVr.ContractType="Договір купівлі-продажу";end;
+	if blank(IVr.ContractPayDeal) then begin IVr.ContractPayDeal="Оплата з поточного рахунку";end;
+  
+	IVVcRecordCheckFailed:;
+	IVVcRecordCheck=res;
+return;
+end;
+
+global
+function LongInt IVVcRecordDuplicate(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  IVr.PNSerNr = -1;
+  res = inner.IVVcRecordDuplicate(IVr,IV2r,long3,long4);
+  
+  IVVcRecordDuplicate = res;  
+  RETURN;
+END;
+
+global  // was create
+function LongInt PositionVcRecordCheck(record PositionVc POSr,record PositionVc POS2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  
+	SetLangMode(LangUkrainian,"UKR",0);
+	
+	res = 0;
+  
+  if blank(POSr.Code) then begin
+    RecordCheckError(10895," Не може бути порожнім",-1,"Code");  
+    res = -1;
+    goto PositionVcRecordCheckFailed;
+  end;
+  
+	PositionVcRecordCheckFailed:;
+	PositionVcRecordCheck=res;
+return;
+end;
+
+global  // was added
+function LongInt TSVcRecordCheck(var record TSVc TSr,record TSVc TS2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  
+	SetLangMode(LangUkrainian,"UKR",0);
+	
+	res = 0;
+    
+  res = inner.TSVcRecordCheck(TSr,TS2r,stat,long4);
+  if res!=-1 then begin
+    if TSr.OKFlag!=1 then begin
+      TSr.RegDate = CurrentDate;
+    end;
+  end;
+	TSVcRecordCheckFailed:;
+	TSVcRecordCheck=res;
+return;
+end;

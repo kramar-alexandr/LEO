@@ -1,0 +1,103 @@
+
+event startup
+begin
+
+	//SetLangMode(LangRussian,"RUS",0);
+	SetLangMode(LangUkrainian,"UKR",0);
+  
+  // SetBegin(31000);
+  // SetText(0,"Junior");
+  // SetText(1,"Senior");
+  // SetText(2,"Not aplicable");
+  // EndSet;
+  
+  /*Report("Balance Sheet",Bal2RClass,Bal2Rn,BalGr2LClass,modNL);	
+  Report("Trial Balance",Bal9RClass,Bal9Rn,BalGr9LClass,modNL);
+  Report("P&L Chicago",Res1RClass,Res1Rn,ResGr1LClass,modNL);
+  Report("Billings&revenue",Res2RClass,Res2Rn,ResGr2LClass,modNL);
+  Report("P&L BCOM3",Res3RClass,Res3Rn,ResGr3LClass,modNL);
+  Report("PUBLICIS - P&L",Res4RClass,Res4Rn,ResGr4LClass,modNL);
+  Report("S-form",Res5RClass,Res5Rn,ResGr5LClass,modNL);
+  Report("Фінансові показники 1",Key1RClass,Key1Rn,Key1TClass,modNL);
+  Report("Фінансові показники 2",Key2RClass,Key2Rn,Key2TClass,modNL);
+  Report("Фінансові показники 3",Key3RClass,Key3Rn,Key3TClass,modNL);
+  Report("Фінансові показники 4",Key4RClass,Key4Rn,Key4TClass,modNL);
+  Report("Фінансові показники 5",Key5RClass,Key5Rn,Key5TClass,modNL);
+  Report("Фінансові показники 6",Key6RClass,Key6Rn,Key6TClass,modNL);
+  Report("Фінансові показники 7",Key7RClass,Key7Rn,Key7TClass,modNL);
+  Report("Фінансові показники 8",Key8RClass,Key8Rn,Key8TClass,modNL);
+  Report("Фінансові показники 9",Key9RClass,Key9Rn,Key9TClass,modNL);
+  Report("Фінансові показники 10",Key10RClass,Key10Rn,Key10TClass,modNL);
+  Report("Фінансові показники 11",Key11RClass,Key11Rn,Key11TClass,modNL);
+  Report("Фінансові показники 12",Key12RClass,Key12Rn,Key12TClass,modNL);
+  Report("Фінансові показники 13",Key13RClass,Key13Rn,Key13TClass,modNL);
+  Report("Фінансові показники 14",Key14RClass,Key14Rn,Key14TClass,modNL);
+  Report("Фінансові показники 15",Key15RClass,Key15Rn,Key15TClass,modNL);
+
+ Report("Баланс 1",Bal1RClass,Bal1Rn,BalGr1LClass,modNL);
+ 
+ Report("Баланс 3",Bal3RClass,Bal3Rn,BalGr3LClass,modNL);
+ Report("Баланс 4",Bal4RClass,Bal4Rn,BalGr4LClass,modNL);
+ Report("Баланс 5",Bal5RClass,Bal5Rn,BalGr5LClass,modNL);
+ Report("Баланс 6",Bal6RClass,Bal6Rn,BalGr6LClass,modNL);
+ Report("Баланс 7",Bal7RClass,Bal7Rn,BalGr7LClass,modNL);
+ Report("Баланс 8",Bal8RClass,Bal8Rn,BalGr8LClass,modNL);
+ 
+ Report("Баланс 10",Bal10RClass,Bal10Rn,BalGr10LClass,modNL);
+ Report("Баланс 11",Bal11RClass,Bal11Rn,BalGr11LClass,modNL);
+ Report("Баланс 12",Bal12RClass,Bal12Rn,BalGr12LClass,modNL);
+ Report("Баланс 13",Bal13RClass,Bal13Rn,BalGr13LClass,modNL);
+ Report("Баланс 14",Bal14RClass,Bal14Rn,BalGr14LClass,modNL);
+ Report("Баланс 15",Bal15RClass,Bal15Rn,BalGr15LClass,modNL);
+
+ 
+  Report("Прибутки та збитки 6",Res6RClass,Res6Rn,ResGr6LClass,modNL);
+  Report("Прибутки та збитки 7",Res7RClass,Res7Rn,ResGr7LClass,modNL);
+  Report("Прибутки та збитки 8",Res8RClass,Res8Rn,ResGr8LClass,modNL);
+  Report("Прибутки та збитки 9",Res9RClass,Res9Rn,ResGr9LClass,modNL);
+  Report("Прибутки та збитки 10",Res10RClass,Res10Rn,ResGr10LClass,modNL);
+  Report("Прибутки та збитки 11",Res11RClass,Res11Rn,ResGr11LClass,modNL);
+  Report("Прибутки та збитки 12",Res12RClass,Res12Rn,ResGr12LClass,modNL);
+  Report("Прибутки та збитки 13",Res13RClass,Res13Rn,ResGr13LClass,modNL);
+  Report("Прибутки та збитки 14",Res14RClass,Res14Rn,ResGr14LClass,modNL);
+  Report("Прибутки та збитки 15",Res15RClass,Res15Rn,ResGr15LClass,modNL); */
+
+	
+	
+
+	Maintenance("заповніть поле commitment",CommitmentVClass,commitmentMn,modTS);
+	SString(31000,"Вкажіть об'єкт типу Проект"); 
+	SString(31001,"Об'єкт типу Проект повинен дорівнювати коду проекта"); 
+	SString(31002,"Вкажіть об'єкт типу Бренд");
+	SString(31003,"Вкажіть об'єкт типу Регіон");
+	SString(31004,"Вкажіть продавця");
+	SString(31005,"Вкажіть дату закінчення проекту");
+	
+	SString(31007,"Такий номер ПН вже зареєстровано"); 
+  SString(31008,"Commitment");  // was add
+ 
+  SetBegin(31009);    // was add
+  SetText(0,"Junior");
+  SetText(1,"Senior");
+  SetText(2,"Not aplicable");
+  EndSet;
+  SString(31010,"Проект");  // was add
+
+  
+	Setting("Контракти",ContractsLClass,modSL);//2011_08_30 SAV LEO-1 –егистр  контракты
+	Report("Реєстр податкових накладних виданих",VATIVRegRClass,VATIVRegRn,0,modSL);
+	Report("Реєстр отриманих податкових накладних",VATVIRegRClass,VATVIRegRn,0,modPL);
+	//Report("Реєстр отриманих податкових накладних",VATVIRegRClass,VATVIRegRn,0,modPL);
+	Report("Журнал актів/накл./ПН постач-ків",VIJSpecRClass,VIJSpecRn,0,modPL);
+  
+  Report("Пошук commitment проекту",SearchPRCommitmentRClass,SearchPRCommitmentRn,0,modTS); //was add
+  Setting("Position",PositionLClass,modSY); //was add
+  Report("Табелі",TimeSheetReportRClass,TimeSheetReportRn,0,modTS); //was add
+    
+  StrSetAdd(3);
+  StrSetText(AllowPRCurrencyChange,"Дозвіл зміни валюти в проектах");
+  EndStrSet; 
+	
+  
+	return;
+end;

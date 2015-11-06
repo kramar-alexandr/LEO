@@ -1,0 +1,118 @@
+global
+procedure VATVIRegRn(record RcVc RepSpec)
+begin
+	record VIVc VIr;
+	record CUVc CUr;
+	boolean trhs;
+	integer i;
+	
+	trhs = true;
+	
+	SetLangMode(LangUkrainian,"UKR",0);
+	startreportnoheaderjob("Реєстр отриманих податкових накладних");
+	StartFormat(15);
+	Outstring(0,0,"Номер з/п",false);
+	Outstring(80,0,"Дата отр.",false);
+	Outstring(150,0,"Дата вип.",false);
+	Outstring(220,0,"Номер",false);
+	Outstring(300,0,"Вид",false);
+	Outstring(350,0,"Постачальник",false);
+	Outstring(0,0,"ІПН",false);
+	Outstring(80,0,"Сума з ПДВ",false);
+	Outstring(150,0,"Сума без ПДВ",false);
+	Outstring(220,0,"Сума ПДВ",false);
+	EndFormat;
+	Black_divider(0,1);
+	VIr.PNTakeDate = RepSpec.sStartDate;
+	while (loopkey("PNTakeDate",VIr,1,trhs)) begin
+		if VIr.PNTakeDate<=RepSpec.sEndDate then begin
+			if VIr.PNSerNr<>-1 then begin
+				i=i+1;
+				CUr.Code = VIr.VECode;
+				if (readfirstmain(CUr,1,true)) then begin end;
+				StartFormat(15);
+				Outstring(0,0,i,false);
+				Outstring(80,0,VIr.PNTakeDate,false);
+				Outstring(150,0,VIr.PNDate,false);
+				Outstring(220,0,VIr.PNSerNr,false);
+				Outstring(300,0,"ПН",false);
+				Outstring(350,0,CUr.Name,false);
+				Outstring(0,0,CUr.VATNr,false);
+				Outstring(80,0,VIr.PNWithoutVAT+VIr.PNVAT,false);
+				Outstring(150,0,VIr.PNWithoutVAT,false);
+				Outstring(220,0,VIr.PNVAT,false);
+				EndFormat;
+				Gray_divider(0,1);	
+			end;
+		end else begin 
+			trhs = false;
+		end;
+	end;// while
+	endjob;
+return;
+end;
+
+
+global
+procedure VATIVRegRn(record RcVc RepSpec)
+begin
+	record IVVc IVr;
+	record CUVc CUr;
+	boolean trhs,testf;
+	integer i;
+	string 60 key;
+	
+
+	SetLangMode(LangUkrainian,"UKR",0);
+	startreportnoheaderjob("Реєстр податкових накладних виданих");
+	StartFormat(15);
+	Outstring(0,0,"Номер з/п",false);
+	Outstring(80,0,"Дата виписки",false);
+	Outstring(150,0,"Номер",false);
+	Outstring(220,0,"Вид документу",false);
+	Outstring(300,0,"Покупець",false);
+	Outstring(0,0,"ІПН",false);
+	Outstring(80,0,"Сума з ПДВ",false);
+	Outstring(150,0,"Сума без ПДВ",false);
+	Outstring(220,0,"Сума ПДВ",false);
+	EndFormat;
+	Black_divider(0,1);
+	if RepSpec.ArtMode==0 then begin 
+		key = "InvDate"; 
+		IVr.InvDate = RepSpec.sStartDate;
+	end else begin
+		key = "PNSerNr"; 
+		IVr.PNSerNr = -1;
+	end;
+	trhs = true;
+	while (loopkey(key,IVr,1,trhs)) begin
+		testf = true;
+		if IVr.InvDate>RepSpec.sEndDate then begin 
+			if RepSpec.ArtMode==0 then begin trhs = false; end;
+			testf=false;
+		end;
+		if IVr.InvDate<RepSpec.sStartDate then begin testf = false; end;
+		if IVr.PNSerNr==-1 then begin testf = false; end;
+		if testf begin
+			i=i+1;
+			CUr.Code = IVr.CustCode;
+			if (readfirstmain(CUr,1,true)) then begin end;
+			StartFormat(15);
+			Outstring(0,0,i,false);
+			Outstring(80,0,IVr.InvDate,false);
+			Outstring(150,0,IVr.PNSerNr,false);
+			Outstring(220,0,"ПН",false);
+			Outstring(300,0,CUr.Name,false);
+			Outstring(0,0,CUr.VATNr,false);
+			Outstring(80,0,IVr.Sum4,false);
+			Outstring(150,0,IVr.Sum1,false);
+			Outstring(220,0,IVr.Sum3,false);
+			//Outstring(0,0,IVr.OKFlag,false);
+			//Outstring(100,"dblIVVc",IVr.SerNr,false);
+			EndFormat;
+			Gray_divider(0,1);
+		end;
+	end;// while
+	endjob;
+return;
+end;
