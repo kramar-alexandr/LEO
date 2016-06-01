@@ -1,5 +1,5 @@
 external function Boolean HasContactClassification();
-external function Boolean HasCategories();
+//external function Boolean HasCategories();
 external procedure HTLevCat(string,var string);
 external procedure HTCustClass(string,var string);
 external function Boolean ContactInGroupClass2(string,string,string,string,string,string,string);
@@ -367,13 +367,13 @@ BEGIN
     Header(rw,tstr,1);
     rw = rw + 1;
   end; 
-  if (HasCategories) then begin			//Dima. from Hansa 7 to 8
+  //if (HasCategories) then begin			//Dima. from Hansa 7 to 8
     HTLevCat(RepSpec.f8,tstr);
     if (nonblank(tstr)) then begin
       Header(rw,tstr,1);
       rw = rw + 1;
     end;
-  end;
+  //end;
   HTOKF(RepSpec.flags[7],RepSpec.flags[8],tstr);
   Header(rw,tstr,0);
   EndHeader;

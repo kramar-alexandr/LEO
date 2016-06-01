@@ -1,6 +1,6 @@
 SourceFile("halcust\\halpatch",0);
 
-procedure DefineIVVcRecordType_Header(Boolean fieldsisf)
+/*procedure DefineIVVcRecordType_Header(Boolean fieldsisf)
 begin
   RecordField(InvDate,M4Date,0,0);
   RecordField(CustCode,M4Code,20,CUVc);
@@ -23,7 +23,7 @@ begin
   RecordField(CustCat,M4Code,5,0);
   RecordField(pdComment,M4Str,60,0);
   RecordField(x1,M4Dummy,0,0);
-  RecordField(InvType,M4Int,0,0); /* 1 = Normal, 2 = Cash, 3 = Credit, 4 = Interest, 5 = Debit Note, 6 = Accounting Period + Net Days 7 = "Dummy" Prepayment Invoice*/
+  RecordField(InvType,M4Int,0,0); 
   RecordField(xStatFlag,M4Int,0,0);
   RecordField(PriceList,M4Code,5,0);
   RecordField(Objects,M4UStr,60,ObjVc);
@@ -342,7 +342,7 @@ begin
   ArrayField(UnitComment,M4Str,200,0);//8.1
   EndArray;
   return;
-end;
+end;*/
 
 begin
 /*

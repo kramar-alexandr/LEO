@@ -1,8 +1,8 @@
-external function Boolean HasContactClassification();
-external function Boolean HasCategories();
-external procedure HTCustCat(string,var string);
-external procedure HTCustClass(string,var string);
-external function Boolean ContactInGroupClass(string,string,string,string,string,string);
+external inner function Boolean HasContactClassification();
+//external function Boolean HasCategories();
+external inner procedure HTCustCat(string,var string);
+external inner procedure HTCustClass(string,var string);
+external inner function Boolean ContactInGroupClass(string,string,string,string,string,string);
 external inner procedure HTDetailLevel(Integer, var string);
 external inner procedure HTCusts(string, string, var string);
 external inner procedure HTProjSort2(Integer,var string);
@@ -101,13 +101,13 @@ begin
   Header(rw,tstr,1);
   rw = rw + 1;
   //---------------------edit by dima. added from 8.1
-  if (HasCategories) then begin
+  //if (HasCategories) then begin
     HTCustCat(RepSpec.f5,tstr);
     if (nonblank(tstr)) then begin
       Header(rw,tstr,1);
       rw = rw + 1;
     end;
-  end;
+  //end;
   if (HasContactClassification) then begin
     HTCustClass(RepSpec.f4,tstr);
     if (nonblank(tstr)) then begin

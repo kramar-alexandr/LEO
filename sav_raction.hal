@@ -102,7 +102,7 @@ end;
 
 
 global  // расширение функционала - есть иннер
-function LongInt IVVcRecordCheck(record IVVc IVr,record IVVc IV2r,LongInt stat,LongInt long4)
+updating function LongInt IVVcRecordCheck(record IVVc IVr,record IVVc IV2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
   record IVVc oldIVr,oldIV2r;

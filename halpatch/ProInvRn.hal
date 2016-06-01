@@ -1,5 +1,5 @@
 external function Boolean HasContactClassification();
-external function Boolean HasCategories();
+//external function Boolean HasCategories();
 external procedure HTCustCat(string,var string);
 external procedure HTCustClass(string,var string);
 external function Boolean ContactInGroupClass(string,string,string,string,string,string);
@@ -871,13 +871,13 @@ begin
   HTPRClass(RepSpec.FirstAcc,tstr);
   Header(rw,tstr,1);
   rw = rw + 1;  
-  if (HasCategories) then begin
+  //if (HasCategories) then begin
     HTCustCat(RepSpec.f5,tstr);
     if (nonblank(tstr)) then begin
       Header(rw,tstr,1);
       rw = rw + 1;
     end;
-  end;
+  //end;
   if (HasContactClassification) then begin
     HTCustClass(RepSpec.f4,tstr);
     if (nonblank(tstr)) then begin
