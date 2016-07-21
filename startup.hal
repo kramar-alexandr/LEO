@@ -64,8 +64,8 @@ begin
 
 	
 	
-
 	Maintenance("заповніть поле commitment",CommitmentVClass,commitmentMn,modTS);
+  Maintenance("Заповнити поля Cost/Price в Project Transactions",MYVClass,TBIVVcFixMn,modTS);//Edit-------------------Vitalii 14:36 21.07.2016
 	SString(31000,"Вкажіть об'єкт типу Проект"); 
 	SString(31001,"Об'єкт типу Проект повинен дорівнювати коду проекта"); 
 	SString(31002,"Вкажіть об'єкт типу Бренд");

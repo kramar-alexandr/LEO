@@ -1,3 +1,6 @@
+external procedure CalcExtra(val,string,var val);
+external procedure CalcSum(val,val,val,val,var val,Integer);
+
 global updating
 procedure CommitmentMn(record RcVc RepSpec)
 begin
@@ -18,4 +21,60 @@ begin
 		end;
 	end;
 return;
+end;
+
+procedure TBIVCalcSum(var record TBIVVc TBIVp)
+BEGIN
+  val t;
+  record GeneralOptionBlock GenOptr;
+  
+  CalcSum(TBIVp.InvQty,TBIVp.Price,0,TBIVp.Discount,t,GenOptr.UseDiscount);
+  TBIVp.Sum = t;
+  CalcExtra(TBIVp.Sum,TBIVp.Markup,t);
+  TBIVp.Sum = TBIVp.Sum + t;
+
+  CalcSum(TBIVp.InvQty,TBIVp.PriceInCur,0,TBIVp.Discount,t,GenOptr.UseDiscount);
+  TBIVp.SumInCur = t;
+  if (blank(TBIVp.SumInCur)==false) then begin
+    CalcExtra(TBIVp.SumInCur,TBIVp.MarkupInCur,t);
+    TBIVp.SumInCur = TBIVp.SumInCur + t;
+  end;
+  if (TBIVp.SumInCur==0) then begin TBIVp.SumInCur = blankval; end;
+  RETURN;
+END;
+
+procedure TBIVSumup(var record TBIVVc TBIVp)
+BEGIN
+  TBIVp.GP = TBIVp.Sum - TBIVp.CostPrice*TBIVp.Qty;
+  TBIVp.GPInCur = TBIVp.SumInCur - TBIVp.CostPriceInCur*TBIVp.Qty;
+  RETURN;
+END;
+
+global updating
+procedure TBIVVcFixMn(record RcVc RepSpec)
+begin
+  record TBIVVc TBIVr;
+  record UserVc Userr;
+  boolean TrHs;
+  
+  TrHs = true;
+  TBIVr.TransDate = StringToDate("01/01/2016");
+  while (loopkey("TransDate",TBIVr,1,TrHs)) begin
+    if TBIVr.TransDate > StringToDate("31/12/2016") then begin
+      TrHs = false;
+    end;
+    if (TrHs) then begin
+      if nonblank(TBIVr.EMCode) then begin
+        Userr.Code = TBIVr.EMCode;
+        if readfirstmain(Userr,1,true) then begin
+          TBIVr.Price = Userr.PricePrHour;
+          TBIVr.CostPrice = Userr.CostPrHour;
+          TBIVCalcSum(TBIVr);
+          TBIVSumup(TBIVr);
+          RecordStore(TBIVr,true);
+        end;
+      end;
+    end;
+  end;
+  return;
 end;
