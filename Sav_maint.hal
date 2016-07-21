@@ -1,5 +1,5 @@
-external procedure CalcExtra(val,string,var val);
-external procedure CalcSum(val,val,val,val,var val,Integer);
+external inner procedure CalcExtra(val,string,var val);
+external inner procedure CalcSum(val,val,val,val,var val,Integer);
 
 global updating
 procedure CommitmentMn(record RcVc RepSpec)
