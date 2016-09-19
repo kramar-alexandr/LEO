@@ -82,7 +82,8 @@ begin
   SetText(2,"Not aplicable");
   EndSet;
   SString(31010,"Проект");  // was add
-
+	
+	Setting("Товари співробітників",DefUsersItemsTClass,modTS);// Edit ************************** Monday, 19 September 2016 14:06:32
   
 	Setting("Контракти",ContractsLClass,modSL);//2011_08_30 SAV LEO-1 –егистр  контракты
 	Report("Реєстр податкових накладних виданих",VATIVRegRClass,VATIVRegRn,0,modSL);

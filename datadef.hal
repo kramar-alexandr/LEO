@@ -1342,6 +1342,15 @@ begin
   KeySegment(PNTakeDate);//6.2
   KeySegment(SerNr);//6.2
   EndRecord;
-    
+	
+	BlockBegin(DefUsersItemsBlock,-,"");// Edit ************************** Monday, 19 September 2016 14:08:32
+	RecordField(Math,M4Matrix,0,0);
+	ArrayBegin(Math,-,1);
+  ArrayField(UserCode,M4Code,80,0);
+  ArrayField(ItemCode,M4Code,80,0);
+  ArrayField(TimeClass,M4Code,80,0);  
+  EndArray;
+	EndBlock; 
+	    
   return;
 end;

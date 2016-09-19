@@ -329,3 +329,23 @@ begin
   EndWindow;
 end;
   
+  
+  window DefUsersItemsTClass:1
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,h3,h4,h5,h6,v,vs;
+  WindowBegin("Товари співробітників",DefUsersItemsTClass,CGHbl,);
+  SetBlid(DefUsersItemsBlock);
+  SetWRect(20,80,720,300);
+  Sizeable(-1,-1,0,0);
+  h = 3; h2 = 100; h3 = 200; h4 = 286; h5 = h4+180; h6 = h5+180;
+  MatrixBegin(h,v,-50,-24,-,99);
+Flip(0);
+  MatCol(1,24,"Персона",0,UserCode,false,UserSCLass);
+  MatCol(1,h2,"Товар",0,ItemCode,false,INSClass);
+  MatCol(1,h3,"Клас часу",0,TimeClass,false,TimeClassSClass);
+
+  EndMatrix;
+
+  EndWindow;
+end;
