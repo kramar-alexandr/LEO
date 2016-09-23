@@ -75,6 +75,7 @@ begin
 	
 	SString(31007,"Такий номер ПН вже зареєстровано"); 
   SString(31008,"Commitment");  // was add
+  SString(31009,"Разом собівартість таблиць часу");// Edit ************************** Thursday, 22 September 2016 17:45:50
  
   SetBegin(31009);    // was add
   SetText(0,"Junior");
