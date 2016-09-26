@@ -275,20 +275,7 @@ LTSDClassActiveEditField:;
   RETURN;
 END;
 
-function Boolean TSDClassEMCodeEFAfter(Integer wn,Integer rownr,Integer changed)
-BEGIN
-  record TSVc TSr;
-  Boolean res;
-  
-  res = true;
-  if (changed!=0) then begin
-    GetWindowRecord(wn,TSr);
-    TSVc_PasteEMCode(TSr,rownr);
-    PutWindowRecord(wn,TSr);    
-  end;
-  TSDClassEMCodeEFAfter = res;
-  RETURN;
-END;
+
 
 function Boolean TSDClassPRCodeEFAfter(Integer wn,Integer rownr,Integer changed)
 BEGIN
@@ -342,6 +329,54 @@ BEGIN
   TSDClassQtyEFAfter = res;
   RETURN;
 END;
+
+function Boolean TSDClassEMCodeEFAfter(Integer wn,Integer rownr,Integer changed)
+BEGIN
+  record TSVc TSr;
+  Boolean res;
+  record DefUsersItemsBlock DUIb;// Edit ************************** Friday, 23 September 2016 17:16:53
+  row DefUsersItemsBlock DUIrw;// Edit ************************** Friday, 23 September 2016 17:16:54
+  integer mtrw,i;// Edit ************************** Friday, 23 September 2016 17:16:54
+  string 80 user,timeclass,item;// Edit ************************** Friday, 23 September 2016 17:16:55
+  row TSVc TSrw;// Edit ************************** Friday, 23 September 2016 17:20:50
+  
+  res = true;
+  if (changed!=0) then begin
+    GetWindowRecord(wn,TSr);
+    matrowget(TSr,rownr,TSrw);
+    TSrw.TimeClass = "";
+    matrowput(TSr,rownr,TSrw);
+    TSVc_PasteEMCode(TSr,rownr);
+    
+    matrowget(TSr,rownr,TSrw)
+    blockload(DUIb);
+    mtrw = matrowcnt(DUIb);
+    For(i=0;i<mtrw;i=i+1) begin
+	  	matrowget(DUIb,i,DUIrw);
+	  	if(TSrw.EMCode==DUIrw.UserCode)then begin
+	  		user = TSrw.EMCode;
+	  		timeclass = DUIrw.TimeClass;
+	  		item = DUIrw.ItemCode;
+	  	end;
+		end; 
+    
+    if((nonblank(item) or nonblank(timeclass)) and TSrw.EMCode==user)then begin
+			matrowget(TSr,rownr,TSrw);
+			TSrw.ArtCode = item;
+			TSrw.TimeClass = timeclass;
+			matrowput(TSr,rownr,TSrw);
+			putwindowrecord(wn,TSr);
+			TSDClassArtCodeEFAfter(wn,rownr,changed);
+			GetWindowRecord(wn,TSr);
+		end;
+    
+    PutWindowRecord(wn,TSr);    
+  end;
+  TSDClassEMCodeEFAfter = res;
+  RETURN;
+END;
+
+
 // Edit Start ---------------------------------------------- Edit Start
 	//Monday, 19 September 2016 15:16:29
 	
@@ -371,32 +406,31 @@ BEGIN
 		end; 
     
     if(nonblank(user))then begin
-    	matrowget(TSr,rownr,TSrw)begin
-    		if(blank(TSrw.EMCode))then begin
-    			TSrw.EMCode = user;
-    			matrowput(TSr,rownr,TSrw);
-    			putwindowrecord(wn,TSr);
-    			TSDClassEMCodeEFAfter(wn,rownr,1);
-    			GetWindowRecord(wn,TSr);
-    			matrowget(TSr,rownr,TSrw);
-    			TSrw.ArtCode = item;
-    			TSrw.TimeClass = timeclass;
-    			matrowput(TSr,rownr,TSrw);
-    			putwindowrecord(wn,TSr);
-    			TSDClassArtCodeEFAfter(wn,rownr,changed);
-    			GetWindowRecord(wn,TSr);
-    		end else begin
-    			if(nonblank(item) and nonblank(timeclass) and TSrw.EMCode==user and blank(TSrw.ArtCode))then begin
-    				matrowget(TSr,rownr,TSrw);
-						TSrw.ArtCode = item;
-						TSrw.TimeClass = timeclass;
-						matrowput(TSr,rownr,TSrw);
-						putwindowrecord(wn,TSr);
-						TSDClassArtCodeEFAfter(wn,rownr,changed);
-						GetWindowRecord(wn,TSr);
-    			end;
-    		end;
-    	end;
+    	matrowget(TSr,rownr,TSrw)
+			if(blank(TSrw.EMCode))then begin
+				TSrw.EMCode = user;
+				matrowput(TSr,rownr,TSrw);
+				putwindowrecord(wn,TSr);
+				TSDClassEMCodeEFAfter(wn,rownr,1);
+				GetWindowRecord(wn,TSr);
+				matrowget(TSr,rownr,TSrw);
+				TSrw.ArtCode = item;
+				TSrw.TimeClass = timeclass;
+				matrowput(TSr,rownr,TSrw);
+				putwindowrecord(wn,TSr);
+				TSDClassArtCodeEFAfter(wn,rownr,changed);
+				GetWindowRecord(wn,TSr);
+			end else begin
+				if(nonblank(item) and nonblank(timeclass) and TSrw.EMCode==user and blank(TSrw.ArtCode))then begin
+					matrowget(TSr,rownr,TSrw);
+					TSrw.ArtCode = item;
+					TSrw.TimeClass = timeclass;
+					matrowput(TSr,rownr,TSrw);
+					putwindowrecord(wn,TSr);
+					TSDClassArtCodeEFAfter(wn,rownr,changed);
+					GetWindowRecord(wn,TSr);
+				end;
+			end;
     end;
     
     TSSumUp(TSr);
