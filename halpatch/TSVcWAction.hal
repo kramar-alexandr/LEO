@@ -348,7 +348,7 @@ BEGIN
     matrowput(TSr,rownr,TSrw);
     TSVc_PasteEMCode(TSr,rownr);
     
-    matrowget(TSr,rownr,TSrw)
+    matrowget(TSr,rownr,TSrw);
     blockload(DUIb);
     mtrw = matrowcnt(DUIb);
     For(i=0;i<mtrw;i=i+1) begin
@@ -406,7 +406,7 @@ BEGIN
 		end; 
     
     if(nonblank(user))then begin
-    	matrowget(TSr,rownr,TSrw)
+    	matrowget(TSr,rownr,TSrw);
 			if(blank(TSrw.EMCode))then begin
 				TSrw.EMCode = user;
 				matrowput(TSr,rownr,TSrw);
